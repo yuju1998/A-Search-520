@@ -3,12 +3,21 @@ public class GridCell {
     private int y;
     private boolean isBlocked;
     private double cost;
+    private double heuristicCost;
 
-    public GridCell(int x, int y, boolean isBlocked) {
+    public GridCell(int x, int y, boolean isBlocked, int i) {
         this.x = x;
         this.y = y;
         this.isBlocked = isBlocked;
         this.cost = 0;
+    }
+
+    public double getHeuristicCost() {
+        return heuristicCost;
+    }
+
+    public void setHeuristicCost(double heuristicCost) {
+        this.heuristicCost = heuristicCost;
     }
 
     public int getX() {
@@ -39,8 +48,12 @@ public class GridCell {
         return cost;
     }
 
-    public void setCost(int cost) {
+    public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    public Tuple<Integer, Integer> getLocation(){
+        return new Tuple<>(x,y);
     }
 
     @Override
@@ -52,4 +65,6 @@ public class GridCell {
                 ", cost=" + cost +
                 '}';
     }
+
+
 }

@@ -7,7 +7,7 @@ public class Grid {
     private int ySize;
 
     private boolean generateIsBlocked(int probabilityOfBlocked){
-        return Math.random()*100 + 1 < probabilityOfBlocked;
+        return Math.random()*100 < probabilityOfBlocked;
     }
 
     private ArrayList<ArrayList<GridCell>> generateGrid(int dimensionX, int dimensionY, int probabilityOfBlocked){
@@ -17,10 +17,10 @@ public class Grid {
             ArrayList<GridCell> tempList = new ArrayList<>();
             for(int y = 0; y< dimensionY; y++){
                 if((x == 0 && y == 0) || (x == dimensionX-1 && y == dimensionY-1)){
-                    tempList.add(new GridCell(x,y,generateIsBlocked(0)));
+                    tempList.add(new GridCell(x,y,generateIsBlocked(0),0));
                 }
                 else {
-                    tempList.add(new GridCell(x, y, generateIsBlocked(probabilityOfBlocked)));
+                    tempList.add(new GridCell(x, y, generateIsBlocked(probabilityOfBlocked), 0));
                 }
 
             }
@@ -36,9 +36,9 @@ public class Grid {
         this.grid = generateGrid(xSize,ySize, probability);
     }
 
-    public GridCell getCell(int x, int y){
-        if(x < xSize && y < ySize){
-            return grid.get(x).get(y);
+    public GridCell getCell(Tuple<Integer, Integer> coordinate){
+        if( coordinate.f1 >=0 && coordinate.f2 >=0 && coordinate.f1 < xSize && coordinate.f2 < ySize){
+            return grid.get(coordinate.f2).get(coordinate.f1);
         }
         return null;
     }
@@ -48,11 +48,11 @@ public class Grid {
         return grid;
     }
 
-    public int getxSize() {
+    public int getXSize() {
         return xSize;
     }
 
-    public int getySize() {
+    public int getYSize() {
         return ySize;
     }
 
@@ -68,7 +68,7 @@ public class Grid {
                 } else if (x == xSize - 1 && y == ySize - 1) {
                     builder.append("G");
                 } else {
-                    if (this.getCell(x, y).isBlocked()) {
+                    if (this.getCell(new Tuple<>(x,y)).isBlocked()) {
                         builder.append("X");
                     } else {
                         builder.append(" ");
