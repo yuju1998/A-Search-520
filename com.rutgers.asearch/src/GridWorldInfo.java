@@ -4,7 +4,7 @@ public class GridWorldInfo {
     double probability;
     double trajectoryLength;
     int numberOfCellsProcessed;
-    List<Tuple<Integer, Integer>> path;
+    List<Tuple<Integer, Integer>> path; // path does not include start cell
 
     public GridWorldInfo(double trajectoryLength, int numberOfCellsProcessed, List<Tuple<Integer, Integer>> path) {
         this.trajectoryLength = trajectoryLength;

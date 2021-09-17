@@ -11,7 +11,7 @@ public class Main {
             for (int j = 0; j<numberOfIterations; j++) {
                 Grid grid = new Grid(xDimension, yDimension, i);
                 aStarSearchObject aso = new aStarSearchObject(aStarSearchObject::euclideanDistance);
-                GridWorldInfo info = aso.aStarSearch(new Tuple<>(0, 0), new Tuple<>(xDimension - 1, yDimension - 1), grid, new HashSet<GridCell>());
+                GridWorldInfo info = aso.aStarSearch(new Tuple<>(0, 0), new Tuple<>(xDimension - 1, yDimension - 1), grid, (new HashSet<GridCell>())::contains);
                 info.setProbability(i);
                 solutionDensity.add(info);
             }

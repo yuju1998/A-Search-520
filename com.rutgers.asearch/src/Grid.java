@@ -13,9 +13,9 @@ public class Grid {
     private ArrayList<ArrayList<GridCell>> generateGrid(int dimensionX, int dimensionY, int probabilityOfBlocked){
         ArrayList<ArrayList<GridCell>> grid = new ArrayList<>();
 
-        for (int x = 0; x< dimensionX; x++){
+        for (int y = 0; y < dimensionY; y++){
             ArrayList<GridCell> tempList = new ArrayList<>();
-            for(int y = 0; y< dimensionY; y++){
+            for(int x = 0; x < dimensionX; x++){
                 if((x == 0 && y == 0) || (x == dimensionX-1 && y == dimensionY-1)){
                     tempList.add(new GridCell(x,y,generateIsBlocked(0),0));
                 }
