@@ -34,7 +34,7 @@ public class Main {
         for (int i = 0; i <= 33; i++){
             for (int j = 0; j<numberOfIterations; j++) {
                 Grid grid = new Grid(xDimension, yDimension, i);
-                aStarSearchObject aso = new aStarSearchObject(aStarSearchObject::euclideanDistance);
+                aStarSearchObject aso = new aStarSearchObject(Heuristics::euclideanDistance);
                 GridWorldInfo info = aso.aStarSearch(new Tuple<>(0, 0), new Tuple<>(xDimension - 1, yDimension - 1), grid, (new HashSet<GridCell>())::contains);
                 info.setProbability(i);
                 solutionDensity.add(info);
