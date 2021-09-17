@@ -5,6 +5,30 @@ import java.util.*;
 
 public class Main {
 
+    // TODO: figure out how to return output information
+    public static void runRobot(Robot rob, Grid grid, SearchAlgo algo) {
+        double totalTrajectoryLength = 0;
+        int totalCellsProcessed = 0;
+
+        while(rob.getLocation().f1 != rob.getGoal().f1 || rob.getLocation().f2 != rob.getGoal().f2) {
+            // find path
+            GridWorldInfo result = algo.search(rob.getLocation(), rob.getGoal(), grid, rob.getKnownObstacles()::contains);
+            totalTrajectoryLength += result.getTrajectoryLength();
+            totalCellsProcessed += result.getNumberOfCellsProcessed();
+
+            if(result.getPath() == null) {
+                // no path found, exit with failure
+                totalTrajectoryLength = Double.NaN;
+                break;
+            }
+
+            // attempt to move along that path
+            rob.run(result.getPath(), grid);
+        }
+
+        // return output...
+    }
+
     public static void runProbabilitySimulation(int xDimension, int yDimension, int numberOfIterations, boolean allowBumps) {
         ArrayList<GridWorldInfo> solutionDensity = new ArrayList<>();
         for (int i = 0; i <= 33; i++){
