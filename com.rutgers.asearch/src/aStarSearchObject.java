@@ -18,6 +18,7 @@ public class aStarSearchObject {
         // create fringe and process start cell
         PriorityQueue<GridCell> fringe = new PriorityQueue<>(new GridCellComparator());
         startCell.setCost(0);
+        startCell.setHeuristicCost(heuristic.apply(start, end));
         startCell.setPrev(null);
         fringe.add(startCell);
 
@@ -78,7 +79,11 @@ public class aStarSearchObject {
         public int compare(GridCell o1, GridCell o2) {
             Double cost1 = o1.getCost() + o1.getHeuristicCost();
             Double cost2 = o2.getCost() + o2.getHeuristicCost();
-            return Double.compare(cost1, cost2);
+            if(Double.compare(cost1, cost2) == 0) { // prefer higher g-cost over higher h-cost
+                return Double.compare(o1.getHeuristicCost(), o2.getHeuristicCost());
+            } else {
+                return Double.compare(cost1, cost2);
+            }
         }
     }
 }
