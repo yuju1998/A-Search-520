@@ -4,12 +4,14 @@ public class GridCell {
     private boolean isBlocked;
     private double cost;
     private double heuristicCost;
+    private GridCell prev;
 
     public GridCell(int x, int y, boolean isBlocked, int i) {
         this.x = x;
         this.y = y;
         this.isBlocked = isBlocked;
         this.cost = 0;
+        this.prev = null;
     }
 
     public double getHeuristicCost() {
@@ -54,6 +56,14 @@ public class GridCell {
 
     public Tuple<Integer, Integer> getLocation(){
         return new Tuple<>(x,y);
+    }
+
+    public GridCell getPrev() {
+        return prev;
+    }
+
+    public void setPrev(GridCell prev) {
+        this.prev = prev;
     }
 
     @Override
