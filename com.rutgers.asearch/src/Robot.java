@@ -1,18 +1,22 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
 
 public class Robot {
     private Tuple<Integer, Integer> current;
     private Tuple<Integer, Integer> goal;
     private boolean canSeeSideways;
     private HashSet<GridCell> blocked;
+    private Grid grid;
+    private SearchAlgo searchAlgo;
 
-    public Robot(Tuple<Integer, Integer> start, Tuple<Integer, Integer> goal, boolean canSeeSideways) {
+    public Robot(Tuple<Integer, Integer> start, Tuple<Integer, Integer> goal, boolean canSeeSideways, Grid grid, SearchAlgo searchAlgo) {
         this.current = start;
         this.goal = goal;
         this.canSeeSideways = canSeeSideways;
         this.blocked = new HashSet<>();
+        this.grid = grid;
+        this.searchAlgo = searchAlgo;
     }
 
     public Tuple<Integer, Integer> getLocation() {
@@ -35,9 +39,17 @@ public class Robot {
         blocked.add(obstacle);
     }
 
+    public Grid getGrid() {
+        return grid;
+    }
+
+    public SearchAlgo getSearchAlgo() {
+        return searchAlgo;
+    }
+
     // attempt to follow a path, updating known obstacles along the way
     // stops prematurely if it bumps into an obstacle
-    public void run(List<Tuple<Integer, Integer>> path, Grid grid) {
+    private int runPath(List<Tuple<Integer, Integer>> path, Grid grid) {
         for(Tuple<Integer, Integer> position : path) {
             if(this.canSeeSideways) { // update obstacles baseed on fov
                 ArrayList<Tuple<Integer, Integer>> directions = new ArrayList<>(4);
@@ -51,13 +63,35 @@ public class Robot {
                     if(cell != null && cell.isBlocked()) this.blocked.add(cell);
                 }
             }
-
             if(grid.getCell(position).isBlocked()) { // if bump into an obstacle, stop
                 this.blocked.add(grid.getCell(position));
-                break;
-            } else {
+                return -1;
+            } else if(grid.getCell(position).equals(goal)){
+                return 1;
+            }else {
                 this.move(position);
             }
         }
+        return 1;
+    }
+
+    public GridWorldInfo run() {
+        GridWorldInfo gridWorldInfoGlobal = new GridWorldInfo(0,0,null);
+        boolean shouldContinue = true;
+        while(shouldContinue) {
+            // find path
+            GridWorldInfo result = getSearchAlgo().search(getLocation(), getGoal(), getGrid(), getKnownObstacles()::contains);
+            if(result == null || result.getPath() == null) {
+                gridWorldInfoGlobal.getPath().clear();
+                gridWorldInfoGlobal.setTrajectoryLength(0);
+                return gridWorldInfoGlobal;
+            }
+            gridWorldInfoGlobal.addTrajectoryLength(result.getTrajectoryLength());
+            gridWorldInfoGlobal.addCellsProcessed(result.getNumberOfCellsProcessed());
+            gridWorldInfoGlobal.setPath(result.getPath());
+            shouldContinue = runPath(result.getPath(), getGrid()) == -1;
+        }
+
+        return gridWorldInfoGlobal;
     }
 }

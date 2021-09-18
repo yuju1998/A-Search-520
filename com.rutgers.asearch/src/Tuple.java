@@ -6,4 +6,10 @@ public class Tuple<X, Y> {
             this.f2 = f2;
         }
 
+    @Override
+    public String toString() {
+        return "<" + f1 +
+                "," + f2 +
+                '>';
     }
+}
