@@ -37,9 +37,11 @@ public class Robot {
 
     // attempt to follow a path, updating known obstacles along the way
     // stops prematurely if it bumps into an obstacle
-    public void run(List<Tuple<Integer, Integer>> path, Grid grid) {
+    // returns the number of steps successfully traveled
+    public int run(List<Tuple<Integer, Integer>> path, Grid grid) {
+        int numStepsTaken = 0;
         for(Tuple<Integer, Integer> position : path) {
-            if(this.canSeeSideways) { // update obstacles baseed on fov
+            if(this.canSeeSideways) { // update obstacles based on fov
                 ArrayList<Tuple<Integer, Integer>> directions = new ArrayList<>(4);
                 directions.add(new Tuple<>(this.current.f1 + 1, this.current.f2)); // right
                 directions.add(new Tuple<>(this.current.f1 - 1, this.current.f2)); // left
@@ -56,8 +58,11 @@ public class Robot {
                 this.blocked.add(grid.getCell(position));
                 break;
             } else {
+                numStepsTaken++;
                 this.move(position);
             }
         }
+
+        return numStepsTaken;
     }
 }

@@ -5,42 +5,48 @@ import java.util.*;
 
 public class Main {
 
-    // TODO: figure out how to return output information
-    public static void runRobot(Robot rob, Grid grid, SearchAlgo algo) {
+    public static GridWorldInfo runRobot(Robot rob, Grid grid, SearchAlgo algo) {
+        // statistics to be collected and returned
         double totalTrajectoryLength = 0;
         int totalCellsProcessed = 0;
+        ArrayList<Tuple<Integer, Integer>> totalPath = new ArrayList<>();
 
-        while(rob.getLocation().f1 != rob.getGoal().f1 || rob.getLocation().f2 != rob.getGoal().f2) {
+        // while robot has not reached the destination
+        while(rob.getLocation().f1.intValue() != rob.getGoal().f1.intValue() || rob.getLocation().f2.intValue() != rob.getGoal().f2.intValue()) {
             // find path
             GridWorldInfo result = algo.search(rob.getLocation(), rob.getGoal(), grid, rob.getKnownObstacles()::contains);
-            totalTrajectoryLength += result.getTrajectoryLength();
             totalCellsProcessed += result.getNumberOfCellsProcessed();
 
+            // if no path found, exit with failure
             if(result.getPath() == null) {
-                // no path found, exit with failure
                 totalTrajectoryLength = Double.NaN;
+                totalPath = null;
                 break;
             }
 
-            // attempt to move along that path
-            rob.run(result.getPath(), grid);
+            // else, attempt to move along that path, and update the overall path taken
+            int stepsTaken = rob.run(result.getPath(), grid);
+            totalTrajectoryLength += stepsTaken;
+            totalPath.addAll(result.getPath().subList(0, stepsTaken));
         }
 
-        // return output...
+        // return output
+        return new GridWorldInfo(totalTrajectoryLength, totalCellsProcessed, totalPath);
     }
 
-    public static void runProbabilitySimulation(int xDimension, int yDimension, int numberOfIterations, boolean allowBumps) {
+    public static void runProbabilitySimulation(int xDimension, int yDimension, int numberOfIterations, boolean canSeeSideways) {
         ArrayList<GridWorldInfo> solutionDensity = new ArrayList<>();
         for (int i = 0; i <= 33; i++){
             for (int j = 0; j<numberOfIterations; j++) {
                 Grid grid = new Grid(xDimension, yDimension, i);
                 aStarSearchObject aso = new aStarSearchObject(Heuristics::euclideanDistance);
-                GridWorldInfo info = aso.aStarSearch(new Tuple<>(0, 0), new Tuple<>(xDimension - 1, yDimension - 1), grid, (new HashSet<GridCell>())::contains);
+                Robot bot = new Robot(new Tuple<>(0, 0), new Tuple<>(xDimension - 1, yDimension - 1), canSeeSideways);
+                GridWorldInfo info = runRobot(bot, grid, aso::aStarSearch);
                 info.setProbability(i);
                 solutionDensity.add(info);
             }
         }
-        String bumps = allowBumps ? "bumps" : "NoBumps";
+        String bumps = canSeeSideways ? "SideFov" : "NoSideFov";
         printResultsToCsv(xDimension + "x" + yDimension + bumps +"Result.csv", solutionDensity);
 
     }
