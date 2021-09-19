@@ -28,8 +28,27 @@ public class GridWorldInfo {
         return numberOfCellsProcessed;
     }
 
+    public void setTrajectoryLength(double trajectoryLength) {
+        this.trajectoryLength = trajectoryLength;
+    }
+
+    public void setNumberOfCellsProcessed(int numberOfCellsProcessed) {
+        this.numberOfCellsProcessed = numberOfCellsProcessed;
+    }
+
+    public void setPath(List<Tuple<Integer, Integer>> path) {
+        this.path = path;
+    }
+
     public List<Tuple<Integer, Integer>> getPath() {
         return path;
     }
 
+    public void addCellsProcessed(int additionalCells) {
+        this.numberOfCellsProcessed += additionalCells;
+    }
+
+    public void addTrajectoryLength(double additionTrajectory) {
+        this.trajectoryLength += additionTrajectory;
+    }
 }

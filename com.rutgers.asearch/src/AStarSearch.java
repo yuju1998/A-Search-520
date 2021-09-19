@@ -2,15 +2,16 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-public class aStarSearchObject {
+public class AStarSearch implements SearchAlgo{
 
     private BiFunction<Tuple<Integer, Integer>, Tuple<Integer, Integer>, Double> heuristic;
 
-    public aStarSearchObject(BiFunction<Tuple<Integer, Integer>, Tuple<Integer, Integer>, Double> heuristic) {
+    public AStarSearch(BiFunction<Tuple<Integer, Integer>, Tuple<Integer, Integer>, Double> heuristic) {
         this.heuristic = heuristic;
     }
 
-    public GridWorldInfo aStarSearch(Tuple<Integer, Integer> start, Tuple<Integer, Integer> end, Grid grid, Predicate<GridCell> isBlocked) {
+    @Override
+    public GridWorldInfo search(Tuple<Integer, Integer> start, Tuple<Integer, Integer> end, Grid grid, Predicate<GridCell> isBlocked) {
         GridCell startCell = grid.getCell(start);
         GridCell endCell = grid.getCell(end);
         if (startCell == endCell || startCell == null || endCell == null) return null;

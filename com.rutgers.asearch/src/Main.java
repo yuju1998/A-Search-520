@@ -36,12 +36,11 @@ public class Main {
 
     public static void runProbabilitySimulation(int xDimension, int yDimension, int numberOfIterations, boolean canSeeSideways) {
         ArrayList<GridWorldInfo> solutionDensity = new ArrayList<>();
-        for (int i = 0; i <= 33; i++){
+        for (int i = 0; i <= 100; i++){
             for (int j = 0; j<numberOfIterations; j++) {
                 Grid grid = new Grid(xDimension, yDimension, i);
-                aStarSearchObject aso = new aStarSearchObject(Heuristics::euclideanDistance);
-                Robot bot = new Robot(new Tuple<>(0, 0), new Tuple<>(xDimension - 1, yDimension - 1), canSeeSideways);
-                GridWorldInfo info = runRobot(bot, grid, aso::aStarSearch);
+                Robot robot = new Robot(new Tuple<> (0,0), new Tuple<>(xDimension-1,yDimension-1), canSeeSideways, grid , new AStarSearch((Heuristics::euclideanDistance)));
+                GridWorldInfo info = robot.run();
                 info.setProbability(i);
                 solutionDensity.add(info);
             }
@@ -89,8 +88,7 @@ public class Main {
         int x = Integer.parseInt(args[0]);
         int y = Integer.parseInt(args[1]);
         int iterations = args.length > 2 ? Integer.parseInt(args[2]): 1000;
-        runProbabilitySimulation(x,y,iterations,true);
-        //runProbabilitySimulation(x,y,iterations,false);
+        runProbabilitySimulation(x,y,iterations,false);
     }
 
 
