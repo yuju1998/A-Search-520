@@ -85,8 +85,8 @@ public class Robot {
 
             // if no path found, exit with failure
             if(result == null || result.getPath() == null) {
-                gridWorldInfoGlobal.getPath().clear();
-                gridWorldInfoGlobal.setTrajectoryLength(0);
+                gridWorldInfoGlobal.setPath(null);
+                gridWorldInfoGlobal.setTrajectoryLength(Double.NaN);
                 return gridWorldInfoGlobal;
             }
 
