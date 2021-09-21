@@ -7,6 +7,7 @@ public class Robot {
     private Tuple<Integer, Integer> goal;
     private boolean canSeeSideways;
     private HashSet<GridCell> blocked;
+    private HashSet<GridCell> free;
     private Grid grid;
     private SearchAlgo searchAlgo;
 
@@ -15,6 +16,7 @@ public class Robot {
         this.goal = goal;
         this.canSeeSideways = canSeeSideways;
         this.blocked = new HashSet<>();
+        this.free = new HashSet<>();
         this.grid = grid;
         this.searchAlgo = searchAlgo;
     }
@@ -35,8 +37,16 @@ public class Robot {
         return blocked;
     }
 
+    public HashSet<GridCell> getKnownFreeSpaces() {
+        return free;
+    }
+
     public void addObstacle(GridCell obstacle) {
         blocked.add(obstacle);
+    }
+
+    public void addFreeSpace(GridCell freeSpace) {
+        free.add(freeSpace);
     }
 
     public Grid getGrid() {
@@ -62,14 +72,20 @@ public class Robot {
 
                 for(Tuple<Integer, Integer> direction : directions) {
                     GridCell cell = grid.getCell(direction);
-                    if(cell != null && cell.isBlocked()) addObstacle(cell);
+                    if(cell != null) {
+                        if(cell.isBlocked()) addObstacle(cell);
+                        else addFreeSpace(cell);
+                    }
                 }
             }
-            if(grid.getCell(position).isBlocked()) { // if bump into an obstacle, stop
-                addObstacle(grid.getCell(position));
+
+            GridCell nextCell = grid.getCell(position);
+            if(nextCell.isBlocked()) { // if bump into an obstacle, stop
+                addObstacle(nextCell);
                 break;
             } else {
                 numStepsTaken++;
+                addFreeSpace(nextCell);
                 move(position);
             }
         }
