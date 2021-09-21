@@ -7,6 +7,7 @@ public class Robot {
     private Tuple<Integer, Integer> goal;
     private boolean canSeeSideways;
     private HashSet<GridCell> blocked;
+    private HashSet<GridCell> free;
     private Grid grid;
     private SearchAlgo searchAlgo;
 
@@ -15,6 +16,8 @@ public class Robot {
         this.goal = goal;
         this.canSeeSideways = canSeeSideways;
         this.blocked = new HashSet<>();
+        this.free = new HashSet<>();
+        this.free.add(grid.getCell(start)); // start cell is always known/assumed to be free
         this.grid = grid;
         this.searchAlgo = searchAlgo;
     }
@@ -35,8 +38,16 @@ public class Robot {
         return blocked;
     }
 
+    public HashSet<GridCell> getKnownFreeSpaces() {
+        return free;
+    }
+
     public void addObstacle(GridCell obstacle) {
         blocked.add(obstacle);
+    }
+
+    public void addFreeSpace(GridCell freeSpace) {
+        free.add(freeSpace);
     }
 
     public Grid getGrid() {
@@ -49,47 +60,58 @@ public class Robot {
 
     // attempt to follow a path, updating known obstacles along the way
     // stops prematurely if it bumps into an obstacle
-    private int runPath(List<Tuple<Integer, Integer>> path, Grid grid) {
+    // returns the number of steps succesfully moved
+    private int runPath(List<Tuple<Integer, Integer>> path) {
+        int numStepsTaken = 0;
         for(Tuple<Integer, Integer> position : path) {
-            if(this.canSeeSideways) { // update obstacles baseed on fov
+            if(canSeeSideways) { // update obstacles based on fov
                 ArrayList<Tuple<Integer, Integer>> directions = new ArrayList<>(4);
-                directions.add(new Tuple<>(this.current.f1 + 1, this.current.f2)); // right
-                directions.add(new Tuple<>(this.current.f1 - 1, this.current.f2)); // left
-                directions.add(new Tuple<>(this.current.f1, this.current.f2 - 1)); // up
-                directions.add(new Tuple<>(this.current.f1, this.current.f2 + 1)); // down
+                directions.add(new Tuple<>(current.f1 + 1, current.f2)); // right
+                directions.add(new Tuple<>(current.f1 - 1, current.f2)); // left
+                directions.add(new Tuple<>(current.f1, current.f2 - 1)); // up
+                directions.add(new Tuple<>(current.f1, current.f2 + 1)); // down
 
                 for(Tuple<Integer, Integer> direction : directions) {
                     GridCell cell = grid.getCell(direction);
-                    if(cell != null && cell.isBlocked()) this.blocked.add(cell);
+                    if(cell != null) {
+                        if(cell.isBlocked()) addObstacle(cell);
+                        else addFreeSpace(cell);
+                    }
                 }
             }
-            if(grid.getCell(position).isBlocked()) { // if bump into an obstacle, stop
-                this.blocked.add(grid.getCell(position));
-                return -1;
-            } else if(grid.getCell(position).equals(goal)){
-                return 1;
-            }else {
-                this.move(position);
+
+            GridCell nextCell = grid.getCell(position);
+            if(nextCell.isBlocked()) { // if bump into an obstacle, stop
+                addObstacle(nextCell);
+                break;
+            } else {
+                numStepsTaken++;
+                addFreeSpace(nextCell);
+                move(position);
             }
         }
-        return 1;
+        return numStepsTaken;
     }
 
     public GridWorldInfo run() {
-        GridWorldInfo gridWorldInfoGlobal = new GridWorldInfo(0,0,null);
-        boolean shouldContinue = true;
-        while(shouldContinue) {
+        GridWorldInfo gridWorldInfoGlobal = new GridWorldInfo(0, 0, new ArrayList<>());
+        // loop while robot has not reached the destination
+        while(!getLocation().f1.equals(getGoal().f1) || !getLocation().f2.equals(getGoal().f2)) {
             // find path
             GridWorldInfo result = getSearchAlgo().search(getLocation(), getGoal(), getGrid(), getKnownObstacles()::contains);
+
+            // if no path found, exit with failure
             if(result == null || result.getPath() == null) {
-                gridWorldInfoGlobal.getPath().clear();
-                gridWorldInfoGlobal.setTrajectoryLength(0);
+                gridWorldInfoGlobal.setPath(null);
+                gridWorldInfoGlobal.setTrajectoryLength(Double.NaN);
                 return gridWorldInfoGlobal;
             }
-            gridWorldInfoGlobal.addTrajectoryLength(result.getTrajectoryLength());
+
+            // attempt to travel down returned path, and update statistics
+            int stepsTaken = runPath(result.getPath());
+            gridWorldInfoGlobal.addTrajectoryLength(stepsTaken);
             gridWorldInfoGlobal.addCellsProcessed(result.getNumberOfCellsProcessed());
-            gridWorldInfoGlobal.setPath(result.getPath());
-            shouldContinue = runPath(result.getPath(), getGrid()) == -1;
+            gridWorldInfoGlobal.getPath().addAll(result.getPath().subList(0, stepsTaken));
         }
 
         return gridWorldInfoGlobal;

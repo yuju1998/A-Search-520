@@ -16,7 +16,7 @@ public class Main {
                 solutionDensity.add(info);
             }
         }
-        String bumps = canSeeSideways ? "bumps" : "NoBumps";
+        String bumps = canSeeSideways ? "SideFov" : "NoSideFov";
         printResultsToCsv(xDimension + "x" + yDimension + bumps +"Result.csv", solutionDensity);
 
     }
