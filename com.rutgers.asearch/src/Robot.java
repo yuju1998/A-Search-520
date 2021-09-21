@@ -17,6 +17,7 @@ public class Robot {
         this.canSeeSideways = canSeeSideways;
         this.blocked = new HashSet<>();
         this.free = new HashSet<>();
+        this.free.add(grid.getCell(start)); // start cell is always known/assumed to be free
         this.grid = grid;
         this.searchAlgo = searchAlgo;
     }
