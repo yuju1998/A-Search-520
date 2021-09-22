@@ -37,24 +37,64 @@ public class GridWorldInfo {
         return trajectoryLength;
     }
 
-    public int getNumberOfCellsProcessed() {
-        return numberOfCellsProcessed;
-    }
-
     public void setTrajectoryLength(double trajectoryLength) {
         this.trajectoryLength = trajectoryLength;
+    }
+
+    public double getTrajectoryLengthDiscovered() {
+        return trajectoryLengthDiscovered;
+    }
+
+    public void setTrajectoryLengthDiscovered(double trajectoryLengthDiscovered) {
+        this.trajectoryLengthDiscovered = trajectoryLengthDiscovered;
+    }
+
+    public double getTrajectoryLengthComplete() {
+        return trajectoryLengthComplete;
+    }
+
+    public void setTrajectoryLengthComplete(double trajectoryLengthComplete) {
+        this.trajectoryLengthComplete = trajectoryLengthComplete;
+    }
+
+    public int getNumberOfCellsProcessed() {
+        return numberOfCellsProcessed;
     }
 
     public void setNumberOfCellsProcessed(int numberOfCellsProcessed) {
         this.numberOfCellsProcessed = numberOfCellsProcessed;
     }
 
-    public void setPath(List<Tuple<Integer, Integer>> path) {
-        this.path = path;
+    public long getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(long runtime) {
+        this.runtime = runtime;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public double getBacktrackSteps() {
+        return backtrackSteps;
+    }
+
+    public void setBacktrackSteps(double backtrackSteps) {
+        this.backtrackSteps = backtrackSteps;
     }
 
     public List<Tuple<Integer, Integer>> getPath() {
         return path;
+    }
+
+    public void setPath(List<Tuple<Integer, Integer>> path) {
+        this.path = path;
     }
 
     public void addCellsProcessed(int additionalCells) {
