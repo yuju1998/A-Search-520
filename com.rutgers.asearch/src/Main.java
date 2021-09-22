@@ -24,38 +24,34 @@ public class Main {
 
     public static void runQuestion6(int xDim, int yDim, int numIter, int maxProb) {
         String fileName = "Q6-AStar-Manhattan-NoBumps-Results.csv";
-        List<GridWorldInfo> results = runThreeSearches(xDim, yDim, numIter, new AStarSearch(Heuristics::manhattanDistance), true, maxProb);
-        printResultsToCsv(fileName, results);
+        runThreeSearches(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::manhattanDistance), true, maxProb);
 
         fileName = "Q6-AStar-Euclidean-NoBumps-Results.csv";
-        results = runThreeSearches(xDim, yDim, numIter, new AStarSearch(Heuristics::euclideanDistance), true, maxProb);
-        printResultsToCsv(fileName, results);
+        runThreeSearches(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::euclideanDistance), true, maxProb);
 
         fileName = "Q6-AStar-Chebyshev-NoBumps-Results.csv";
-        results = runThreeSearches(xDim, yDim, numIter, new AStarSearch(Heuristics::chebyshevDistance), true, maxProb);
-        printResultsToCsv(fileName, results);
+        runThreeSearches(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::chebyshevDistance), true, maxProb);
 
         fileName = "Q6-BFS-NoBumps-Results.csv";
-        results = runThreeSearches(xDim, yDim, numIter, BFSObject::BFS, true, maxProb);
-        printResultsToCsv(fileName, results);
+        runThreeSearches(fileName, xDim, yDim, numIter, BFSObject::BFS, true, maxProb);
     }
 
     public static void runQuestion7(int xDim, int yDim, int numIter, int maxProb) {
-        String fileName = "Q6-AStar-Manhattan-Bumps-Results.csv";
-        List<GridWorldInfo> results = runThreeSearches(xDim, yDim, numIter, new AStarSearch(Heuristics::manhattanDistance), false, maxProb);
-        printResultsToCsv(fileName, results);
+        String fileName = "Q7-AStar-Manhattan-Bumps-Results.csv";
+        runThreeSearches(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::manhattanDistance), false, maxProb);
 
-        fileName = "Q6-AStar-Euclidean-Bumps-Results.csv";
-        results = runThreeSearches(xDim, yDim, numIter, new AStarSearch(Heuristics::euclideanDistance), false, maxProb);
-        printResultsToCsv(fileName, results);
+        fileName = "Q7-AStar-Euclidean-Bumps-Results.csv";
+        runThreeSearches(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::euclideanDistance), false, maxProb);
 
-        fileName = "Q6-AStar-Chebyshev-Bumps-Results.csv";
-        results = runThreeSearches(xDim, yDim, numIter, new AStarSearch(Heuristics::chebyshevDistance), false, maxProb);
-        printResultsToCsv(fileName, results);
+        fileName = "Q7-AStar-Chebyshev-Bumps-Results.csv";
+        runThreeSearches(fileName, xDim, yDim, numIter, new AStarSearch(Heuristics::chebyshevDistance), false, maxProb);
 
-        fileName = "Q6-BFS-Bumps-Results.csv";
-        results = runThreeSearches(xDim, yDim, numIter, BFSObject::BFS, false, maxProb);
-        printResultsToCsv(fileName, results);
+        fileName = "Q7-BFS-Bumps-Results.csv";
+        runThreeSearches(fileName, xDim, yDim, numIter, BFSObject::BFS, false, maxProb);
+    }
+
+    public static void runQuestion9(int xDim, int yDim, int numIter, int maxProb, double maxWeight) {
+
     }
 
     public static void printResultsToCsv(String fileName, List<GridWorldInfo> gridWorldInfo){
@@ -103,7 +99,7 @@ public class Main {
         runQuestion7(x, y, iterations, 33);
     }
 
-    private static List<GridWorldInfo> runThreeSearches(int xDim, int yDim, int numIter, SearchAlgo algo, boolean canSeeSideways, int maxProb) {
+    private static void runThreeSearches(String fileName, int xDim, int yDim, int numIter, SearchAlgo algo, boolean canSeeSideways, int maxProb) {
         // initialize variables needed for searching
         Tuple<Integer, Integer> start = new Tuple<>(0, 0);
         Tuple<Integer, Integer> end = new Tuple<>(xDim-1, yDim-1);
@@ -142,7 +138,7 @@ public class Main {
             }
         }
 
-        return results;
+        printResultsToCsv(fileName, results);
     }
 
 }
