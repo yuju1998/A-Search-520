@@ -62,7 +62,7 @@ public class AStarSearch implements SearchAlgo{
                     discoveredCells.add(child);
                 } else if(previousCost + 1 < child.getCost()) { // already in queue -> check if priority needs to be updated
                     boolean check = fringe.remove(child);
-                    if(check == false) System.out.println("heuristic consistency violated");
+                    // if(check == false) System.out.println("heuristic consistency violated");
                     child.setCost(previousCost + 1);
                     child.setPrev(currentCell);
                     fringe.add(child);
