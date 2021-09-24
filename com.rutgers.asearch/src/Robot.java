@@ -5,6 +5,7 @@ import java.util.List;
 public class Robot {
     private Tuple<Integer, Integer> current;
     private Tuple<Integer, Integer> goal;
+    private Tuple<Integer, Integer> restartPoint;
     private boolean canSeeSideways;
     private HashSet<GridCell> blocked;
     private HashSet<GridCell> free;
@@ -13,6 +14,7 @@ public class Robot {
 
     public Robot(Tuple<Integer, Integer> start, Tuple<Integer, Integer> goal, boolean canSeeSideways, Grid grid, SearchAlgo searchAlgo) {
         this.current = start;
+        this.restartPoint = this.current;
         this.goal = goal;
         this.canSeeSideways = canSeeSideways;
         this.blocked = new HashSet<>();
@@ -23,7 +25,20 @@ public class Robot {
     }
 
     public Tuple<Integer, Integer> getLocation() {
-        return current;
+//        System.out.println("Curr:" + current);
+//        System.out.println("Restart:" + restartPoint);
+        if(current.equals(goal))
+            return goal;
+        return current.equals(restartPoint) ? current : restartPoint;
+
+    }
+
+    public Tuple<Integer, Integer> getRestartPoint(){
+        return restartPoint;
+    }
+
+    public void setRestartPoint(Tuple<Integer, Integer> pos){
+        restartPoint = pos;
     }
 
     public Tuple<Integer, Integer> getGoal() {
@@ -61,7 +76,7 @@ public class Robot {
     // attempt to follow a path, updating known obstacles along the way
     // stops prematurely if it bumps into an obstacle
     // returns the number of steps succesfully moved
-    private int runPath(List<Tuple<Integer, Integer>> path) {
+    private int runPath(List<Tuple<Integer, Integer>> path, int backtrackDistance) {
         int numStepsTaken = 0;
         for(Tuple<Integer, Integer> position : path) {
             if(canSeeSideways) { // update obstacles based on fov
@@ -88,12 +103,19 @@ public class Robot {
                 numStepsTaken++;
                 addFreeSpace(nextCell);
                 move(position);
+                if(numStepsTaken % backtrackDistance == 0){
+                    setRestartPoint(position);
+                }
             }
         }
         return numStepsTaken;
     }
 
     public GridWorldInfo run() {
+       return run(1);
+    }
+
+    public GridWorldInfo run(int backtrackDistance) {
         GridWorldInfo gridWorldInfoGlobal = new GridWorldInfo(0, 0, new ArrayList<>());
         // loop while robot has not reached the destination
         while(!getLocation().f1.equals(getGoal().f1) || !getLocation().f2.equals(getGoal().f2)) {
@@ -108,7 +130,7 @@ public class Robot {
             }
 
             // attempt to travel down returned path, and update statistics
-            int stepsTaken = runPath(result.getPath());
+            int stepsTaken = runPath(result.getPath(), backtrackDistance );
             gridWorldInfoGlobal.addTrajectoryLength(stepsTaken);
             gridWorldInfoGlobal.addCellsProcessed(result.getNumberOfCellsProcessed());
             gridWorldInfoGlobal.getPath().addAll(result.getPath().subList(0, stepsTaken));

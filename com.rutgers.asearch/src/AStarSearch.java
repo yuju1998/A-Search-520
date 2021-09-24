@@ -6,18 +6,29 @@ public class AStarSearch implements SearchAlgo{
 
     private BiFunction<Tuple<Integer, Integer>, Tuple<Integer, Integer>, Double> heuristic;
 
+
     public AStarSearch(BiFunction<Tuple<Integer, Integer>, Tuple<Integer, Integer>, Double> heuristic) {
         this.heuristic = heuristic;
     }
+
+    /**
+     * This runs the A* Search algorithm. Predicate is used to pass in a boolean evaluation function to check what spaces we have been to/are blocked or spaces that are free.
+     * Returns a GridWorldInfo Object {@link GridWorldInfo}.
+     * @param start Start Location
+     * @param end End Location
+     * @param grid Grid to Search
+     * @param isBlocked Function to check whether cells are blocked
+     * @return
+     */
 
     @Override
     public GridWorldInfo search(Tuple<Integer, Integer> start, Tuple<Integer, Integer> end, Grid grid, Predicate<GridCell> isBlocked) {
         GridCell startCell = grid.getCell(start);
         GridCell endCell = grid.getCell(end);
-        if (startCell == endCell || startCell == null || endCell == null) return null;
+        if (startCell == endCell || startCell == null || endCell == null) return null; // Checks invalid cells
 
         // create fringe and process start cell
-        PriorityQueue<GridCell> fringe = new PriorityQueue<>(new GridCellComparator());
+        PriorityQueue<GridCell> fringe = new PriorityQueue<>(new GridCellComparator()); // Priority Queue for reference
         startCell.setCost(0);
         startCell.setHeuristicCost(heuristic.apply(start, end));
         startCell.setPrev(null);
@@ -30,10 +41,10 @@ public class AStarSearch implements SearchAlgo{
         discoveredCells.add(startCell);
         int numberOfCellsProcessed = 0;
         while (!fringe.isEmpty()) {
-            numberOfCellsProcessed++;
-            currentCell = fringe.poll();
-            previousCost = currentCell.getCost();
-            if (currentCell.equals(endCell)) {
+            numberOfCellsProcessed++; //Cell Processed Counter
+            currentCell = fringe.poll();// Get First in Queue
+            previousCost = currentCell.getCost(); //Previous cost of the cell
+            if (currentCell.equals(endCell)) { //check if end then start return obj creation
                 // goal found, reconstruct path
                 LinkedList<Tuple<Integer, Integer>> path = new LinkedList<>();
                 while(currentCell.getPrev() != null) { // while we have not reached the start cell...
@@ -74,7 +85,7 @@ public class AStarSearch implements SearchAlgo{
         return new GridWorldInfo(Double.NaN, numberOfCellsProcessed, null);
     }
 
-    class GridCellComparator implements Comparator<GridCell> {
+    class GridCellComparator implements Comparator<GridCell> { //Custom Comparator for Priority Queue
 
         @Override
         public int compare(GridCell o1, GridCell o2) {

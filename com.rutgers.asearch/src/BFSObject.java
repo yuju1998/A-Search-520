@@ -2,6 +2,16 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class BFSObject {
+
+    /**
+     * Runs BFS on a Grid and returns a {@link GridWorldInfo} containing usage data.
+     *
+     * @param start Start Position
+     * @param end End Position
+     * @param grid Grid to Search
+     * @param isBlocked Predicate whether a cell is blocked
+     * @return GridWorldInfo containing the info for grid world
+     */
     public static GridWorldInfo BFS(Tuple<Integer, Integer> start, Tuple<Integer, Integer> end, Grid grid, Predicate<GridCell> isBlocked) {
         GridCell startCell = grid.getCell(start);
         GridCell endCell = grid.getCell(end);
