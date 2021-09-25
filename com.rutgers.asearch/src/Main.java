@@ -89,6 +89,7 @@ public class Main {
         runQuestion7(x, y, iterations, 33);
         runQuestion8(x,y,iterations,20);
         runQuestion9(x, y, iterations, 15, 10.0, 0.2);
+        runQuestion9(x, y, iterations, 25, 10.0, 0.2);
     }
 
     /**
